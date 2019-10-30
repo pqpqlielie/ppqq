@@ -7,13 +7,21 @@
 #define MAP_HEIGTH 20
 
 
-typedef struct Postion
+typedef struct Position
 {
 	int x;
 	int y;
 
+}Position;
+
+void DrawChar(int x, int y, char ch)
+{
+	COORD pos;
+	pos.X = x;
+	pos.Y = y;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
+	putchar(ch);
 }
-;
 void Init()
 {
 	for (int i=0;i<= MAP_HEIGTH;i++)
@@ -54,6 +62,7 @@ void Score()
 
 int main(int argc, char* argv[])
 {
+	DrawChar(3, 4,6);
 	Init();
 	GameLoop();
 	Score();

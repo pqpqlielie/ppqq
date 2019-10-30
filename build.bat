@@ -1,4 +1,4 @@
 md build
 cd build
-cmake -G  "13 2015"" ..
+cmake -G  "Visual Stadio 14 2015 win64" ..
 cmake --build .

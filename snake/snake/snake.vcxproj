@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{CACAC899-5E71-48BB-887B-B46EEE0BE7C5}</ProjectGuid>
+    <ProjectGuid>{59785F88-C663-4B3F-8AAE-4481DF3642FF}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>snake</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>

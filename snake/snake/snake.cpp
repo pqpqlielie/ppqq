@@ -8,7 +8,7 @@
 #include<time.h>
 #include<conio.h>
 #define MAP_WIDTH 60
-#define MAP_HEIGTH 20
+#define MAP_HEIGHT 20
 void DrawChar(int x, int y, char ch);
 
 typedef struct Position
@@ -20,16 +20,18 @@ typedef struct Position
 typedef struct Snake
 {
 	int size;
-	Position pos[MAP_WIDTH * MAP_HEIGTH];
+	Position pos[MAP_WIDTH * MAP_HEIGHT];
 }Snake;
+
 Snake g_snake;
 Position g_food;
+int g_score;
 
 void Initfood()
 {
 	srand((unsigned)time(NULL));
 	g_food.x = rand() % MAP_WIDTH;
-	g_food.y = rand() % MAP_HEIGTH;
+	g_food.y = rand() % MAP_HEIGHT;
 	DrawChar(g_food.x, g_food.y, '#');
 }
 
@@ -37,11 +39,11 @@ void InitSnake()
 {
 	g_snake.size = 3;
 	g_snake.pos[0].x = MAP_WIDTH / 2;
-	g_snake.pos[0].y = MAP_HEIGTH / 2;
+	g_snake.pos[0].y = MAP_HEIGHT / 2;
 	g_snake.pos[1].x = MAP_WIDTH / 2 - 1;
-	g_snake.pos[1].y = MAP_HEIGTH / 2;
+	g_snake.pos[1].y = MAP_HEIGHT / 2;
 	g_snake.pos[2].x = MAP_WIDTH / 2 - 2;
-	g_snake.pos[2].y = MAP_HEIGTH / 2;
+	g_snake.pos[2].y = MAP_HEIGHT / 2;
 }
 void DrawSnake()
 {
@@ -68,7 +70,7 @@ void DrawChar(int x, int y, char ch)
 }
 void InitMap()
 {
-	for (int i = 0; i <= MAP_HEIGTH; i++)
+	for (int i = 0; i <= MAP_HEIGHT; i++)
 	{
 		for (int j = 0; j <= MAP_WIDTH; j++)
 		{
@@ -76,7 +78,7 @@ void InitMap()
 			{
 				printf("|\n");
 			}
-			else if (i == MAP_HEIGTH)
+			else if (i == MAP_HEIGHT)
 			{
 				printf("-");
 			}
@@ -86,6 +88,8 @@ void InitMap()
 			}
 		}
 	}
+	 printf("w:上 a:左 s:下 d:右\n");
+	 printf("作者：徐列列");
 }
 
 void Init()
@@ -143,25 +147,100 @@ void EatFood()
 		g_snake.pos[g_snake.size - 1].y= g_food.y;
 
 		Initfood();
+		g_score += 10;
 	}
 }
 
+int   HitWall()
+{
+	if (g_snake.pos[0].x < 0 ||
+		g_snake.pos[0].y < 0 || 
+		g_snake.pos[0].x > MAP_WIDTH ||
+		g_snake.pos[0].y > MAP_HEIGHT)
+	{
+		return -1;
+	}
+	return 0;
+}
+
+int EatSelf()
+{
+	for ( int i = 1;i<g_snake.size;i++)
+	{
+		if (g_snake.pos[0].x == g_snake.pos[i].x &&
+			g_snake.pos[0].y == g_snake.pos[i].y)
+		{
+			return -1;
+		}
+	}
+	return 0;
+}
+
+int IsBack(int key,int last_key)
+{
+	if (key == 'w' || key == 'W')
+	{
+		if (last_key == 's' || last_key == 'S')
+		{
+			return -1;
+		}
+	}
+	else if (key == 's' || key == 'S')
+	{
+		if (last_key == 'w' || last_key == 'W')
+		{
+			return -1;
+		}
+	}
+	else if (key == 'a' || key == 'A')
+	{
+		if (last_key == 'd' || last_key == 'D')
+		{
+			return -1;
+		}
+	}
+	else if (key == 'd' || key == 'D')
+	{
+		if (last_key == 'a' || last_key == 'A')
+		{
+			return -1;
+		}
+	}
+	return 0;
+}
 
 void GameLoop()
 {
 	int key = 0;
+	int last_key = 0;
+
 	while (1)
 	{
 		if (_kbhit())
 		{
 			key = _getch();
+			if (IsBack(key ,last_key)<0)
+			{
+				key = last_key;
+				continue;
+			}
+			last_key = key;
 		}
 		if (key == 'q' || key == 'Q')
 		{
 			return;
 		}
-
 		SnakeMove(key);
+		if (HitWall() < 0)
+		{
+			return ;
+		}
+		
+		if (EatSelf() < 0)
+		{
+			return;
+		}
+		
 		EatFood();
 		DrawSnake();
 		Sleep(100);
@@ -170,9 +249,10 @@ void GameLoop()
 
 void Score()
 {
-
+	system("cls");
+	printf("Winner!\n");
+	printf("得分 %d\n",g_score);
 }
-
 
 int main(int argc, char* argv[])
 {
